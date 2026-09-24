@@ -171,37 +171,53 @@ export default function App() {
   const isCurrentDeckSaved = deck ? savedDecks.some((d) => d.id === deck.id) : false;
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200 relative overflow-x-hidden">
+      {/* Ambient background lighting */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-gradient-to-tr from-brand-500/15 via-purple-500/15 to-transparent blur-3xl rounded-full dark:from-brand-600/20 dark:via-purple-600/15" />
+        <div className="absolute top-1/3 -right-40 w-[600px] h-[600px] bg-gradient-to-bl from-indigo-500/10 via-brand-500/5 to-transparent blur-3xl rounded-full" />
+        <div className="absolute bottom-10 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-500/10 to-transparent blur-3xl rounded-full" />
+      </div>
+
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-800/80 px-4 sm:px-8 py-3.5">
+      <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/75 dark:bg-slate-950/75 border-b border-slate-200/80 dark:border-slate-800/80 px-4 sm:px-8 py-3.5 transition-colors">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/25 ring-2 ring-brand-500/20">
               <BrainCircuit className="w-5 h-5" />
             </div>
             <div>
-              <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-white">
-                OmniLearn AI
-              </span>
-              <span className="hidden sm:inline-block ml-2 text-[11px] font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 px-2 py-0.5 rounded-full border border-brand-200/40 dark:border-brand-800/40">
-                Interactive Study Assistant
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white">
+                  OmniLearn<span className="text-brand-600 dark:text-brand-400">.ai</span>
+                </span>
+                <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Proxy Ready
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">
+                Interactive Study System & Quiz Engine
+              </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsSessionsModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-xs transition-all active:scale-95"
             >
               <Bookmark className="w-3.5 h-3.5 text-brand-500" />
-              <span>Sessions ({savedDecks.length})</span>
+              <span>Saved Decks</span>
+              <span className="ml-1 px-1.5 py-0.2 rounded-md bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-400 font-mono text-[10px]">
+                {savedDecks.length}
+              </span>
             </button>
 
             <button
               onClick={() => setDarkMode(!darkMode)}
               aria-label="Toggle theme"
-              className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 shadow-xs transition-all active:scale-95"
             >
               {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
             </button>

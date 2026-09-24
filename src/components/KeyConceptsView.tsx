@@ -28,39 +28,51 @@ export const KeyConceptsView: React.FC<KeyConceptsViewProps> = ({ concepts }) =>
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
       {/* Header and Progress Bar */}
-      <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+      <div className="p-6 rounded-3xl glass-panel shadow-sm space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <BookmarkCheck className="w-5 h-5 text-brand-600 dark:text-brand-400" />
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Key Conceptual Checklist
-            </h3>
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400">
+              <BookmarkCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                Conceptual Mastery Checklist
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Check off concepts as you internalize their definitions
+              </p>
+            </div>
           </div>
 
-          <div className="text-sm font-semibold text-slate-600 dark:text-slate-400">
-            {checkedCount} of {concepts.length} Mastered ({progressPct}%)
+          <div className="text-right">
+            <div className="text-sm font-extrabold text-slate-800 dark:text-slate-200">
+              {checkedCount} / {concepts.length} Mastered
+            </div>
+            <div className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              {progressPct}% Completion
+            </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+        <div className="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
           <div
-            className="bg-emerald-500 h-full transition-all duration-300"
+            className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full transition-all duration-300"
             style={{ width: `${progressPct}%` }}
           />
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex items-center gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800">
           <Filter className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-xs text-slate-400 font-medium">Filter:</span>
+          <span className="text-xs text-slate-400 font-bold">Filter:</span>
           {(['all', 'core', 'supporting', 'advanced'] as const).map((mode) => (
             <button
               key={mode}
               onClick={() => setFilter(mode)}
-              className={`text-xs px-2.5 py-1 rounded-lg capitalize transition-colors ${
+              className={`text-xs px-3 py-1 rounded-xl capitalize font-bold transition-all ${
                 filter === mode
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -80,41 +92,41 @@ export const KeyConceptsView: React.FC<KeyConceptsViewProps> = ({ concepts }) =>
             <div
               key={concept.id}
               onClick={() => toggleCheck(concept.id)}
-              className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-4 select-none ${
+              className={`p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-4 select-none card-hover-fx ${
                 isChecked
-                  ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60'
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-brand-300 dark:hover:border-brand-800'
+                  ? 'bg-emerald-500/10 border-emerald-500/40 shadow-xs'
+                  : 'bg-white/80 dark:bg-slate-900/80 border-slate-200/80 dark:border-slate-800 hover:border-brand-400/50'
               }`}
             >
               <button
                 type="button"
-                className="mt-0.5 text-brand-600 dark:text-brand-400 shrink-0"
+                className="mt-0.5 text-brand-600 dark:text-brand-400 shrink-0 transition-transform active:scale-90"
               >
                 {isChecked ? (
-                  <CheckSquare className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <CheckSquare className="w-5 h-5 text-emerald-500" />
                 ) : (
                   <Square className="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" />
                 )}
               </button>
 
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className={`text-base font-bold transition-all ${
+                <div className="flex items-center gap-2 mb-1.5">
+                  <h4 className={`text-base font-extrabold transition-all ${
                     isChecked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-900 dark:text-white'
                   }`}>
                     {concept.title}
                   </h4>
-                  <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${
+                  <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full ${
                     importance === 'core'
-                      ? 'bg-brand-100 text-brand-700 dark:bg-brand-950/60 dark:text-brand-400'
+                      ? 'bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20'
                       : importance === 'advanced'
-                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-400'
-                      : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                      ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
+                      : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'
                   }`}>
                     {importance}
                   </span>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                   {concept.summary}
                 </p>
               </div>
@@ -124,7 +136,7 @@ export const KeyConceptsView: React.FC<KeyConceptsViewProps> = ({ concepts }) =>
       </div>
 
       {filteredConcepts.length === 0 && (
-        <div className="p-8 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-500 text-sm">
+        <div className="p-8 text-center glass-panel rounded-2xl text-slate-500 text-sm">
           No concepts found under the "{filter}" filter.
         </div>
       )}

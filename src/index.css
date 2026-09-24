@@ -8,9 +8,9 @@
   }
 }
 
-/* 3D Flashcard Flip Mechanics */
+/* 3D Flashcard Flip Mechanics with Smooth Physics */
 .perspective-1000 {
-  perspective: 1000px;
+  perspective: 1200px;
 }
 
 .transform-style-3d {
@@ -26,7 +26,49 @@
   transform: rotateY(180deg);
 }
 
-/* Custom scrollbars */
+/* Glassmorphism & High-End Card Polish */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+/* Soft Ambient Glows */
+.ambient-glow-indigo {
+  box-shadow: 0 0 50px -12px rgba(99, 102, 241, 0.25);
+}
+
+.ambient-glow-emerald {
+  box-shadow: 0 0 50px -12px rgba(16, 185, 129, 0.25);
+}
+
+.ambient-glow-purple {
+  box-shadow: 0 0 50px -12px rgba(168, 85, 247, 0.25);
+}
+
+/* Subtle Interactive Card Depth */
+.card-hover-fx {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover-fx:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.08);
+}
+
+.dark .card-hover-fx:hover {
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -37,10 +79,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.3);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.6);
+  background: rgba(100, 116, 139, 0.5);
 }

@@ -8,7 +8,10 @@ import {
   RotateCcw,
   ArrowRight,
   Sparkles,
-  BookOpen
+  BookOpen,
+  Target,
+  Flame,
+  CheckCircle2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -45,7 +48,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
   );
 
   const handleSelectOption = (optionId: string) => {
-    if (isAnswered) return; // Cannot change answer once submitted
+    if (isAnswered) return;
     setSelectedAnswers((prev) => ({
       ...prev,
       [currentQ.id]: optionId
@@ -57,12 +60,11 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
       setCurrentIndex((prev) => prev + 1);
     } else {
       setIsCompleted(true);
-      // Trigger celebratory confetti if passed well
       const finalScore = (correctCount / activeQuestions.length) * 100;
       if (finalScore >= 70) {
         confetti({
-          particleCount: 80,
-          spread: 70,
+          particleCount: 100,
+          spread: 80,
           origin: { y: 0.6 }
         });
       }
@@ -73,7 +75,6 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
     if (wrongQuestions.length === 0) return;
     setActiveQuestions(wrongQuestions);
     setCurrentIndex(0);
-    // Clear answers for the re-tested questions
     const nextAnswers = { ...selectedAnswers };
     wrongQuestions.forEach((q) => {
       delete nextAnswers[q.id];
@@ -93,9 +94,9 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
 
   if (!currentQ && !isCompleted) {
     return (
-      <div className="text-center py-12 p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
-        <BookOpen className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-        <h4 className="text-base font-semibold text-slate-700 dark:text-slate-300">
+      <div className="text-center py-16 p-6 glass-panel rounded-3xl shadow-sm">
+        <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+        <h4 className="text-base font-bold text-slate-700 dark:text-slate-300">
           No quiz questions available for this topic.
         </h4>
       </div>
@@ -109,30 +110,44 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
     const hasWrong = wrongQuestions.length > 0;
 
     return (
-      <div className="w-full max-w-2xl mx-auto my-6 p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl text-center animate-scale-in">
-        <div className="inline-flex p-4 rounded-3xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 mb-4">
+      <div className="w-full max-w-2xl mx-auto my-6 p-8 sm:p-10 glass-panel rounded-3xl shadow-2xl text-center animate-scale-in">
+        <div className="inline-flex p-5 rounded-3xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white shadow-lg shadow-brand-500/25 mb-4">
           <Trophy className="w-12 h-12" />
         </div>
 
-        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
-          {isReTestingWrong ? 'Wrong Answers Re-Test Completed!' : 'Quiz Completed!'}
+        <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          {isReTestingWrong ? 'Missed Questions Review Complete!' : 'Quiz Session Complete!'}
         </h3>
 
-        <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">
+        <p className="text-slate-600 dark:text-slate-400 text-sm mt-2 max-w-md mx-auto">
           {percentage >= 80
-            ? 'Outstanding mastery of this subject!'
+            ? 'Exceptional mastery! Your conceptual foundations are locked in.'
             : percentage >= 50
-            ? 'Good progress! Review your missed questions to cement concepts.'
-            : 'Keep practicing! Active recall repetition will reinforce retention.'}
+            ? 'Solid effort! Re-test your missed questions to achieve total mastery.'
+            : 'Active recall repetition is key. Practice with wrong answers to reinforce retention.'}
         </p>
 
-        {/* Score Ring */}
-        <div className="my-8 inline-block p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-          <div className="text-4xl font-extrabold text-brand-600 dark:text-brand-400">
-            {correctCount} / {total}
+        {/* Score Metric Cards Grid */}
+        <div className="my-8 grid grid-cols-3 gap-3">
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
+            <div className="text-xs uppercase font-extrabold tracking-wider text-slate-400">Score</div>
+            <div className="text-2xl sm:text-3xl font-black text-brand-600 dark:text-brand-400 mt-1">
+              {percentage}%
+            </div>
           </div>
-          <div className="text-xs uppercase tracking-wider font-bold text-slate-400 mt-1">
-            Score: {percentage}%
+
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
+            <div className="text-xs uppercase font-extrabold tracking-wider text-emerald-500">Correct</div>
+            <div className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
+              {correctCount}
+            </div>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
+            <div className="text-xs uppercase font-extrabold tracking-wider text-amber-500">Missed</div>
+            <div className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">
+              {wrongQuestions.length}
+            </div>
           </div>
         </div>
 
@@ -141,16 +156,16 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
           {hasWrong && (
             <button
               onClick={handleRetestWrongAnswers}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white bg-amber-500 hover:bg-amber-600 shadow-md transition-all active:scale-95"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg shadow-amber-500/25 transition-all active:scale-95"
             >
               <RotateCcw className="w-4 h-4" />
-              Re-Test Wrong Answers ({wrongQuestions.length})
+              Re-Test Wrong Answers Only ({wrongQuestions.length})
             </button>
           )}
 
           <button
             onClick={handleResetFullQuiz}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-sm text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 shadow-sm transition-all active:scale-95"
           >
             <Sparkles className="w-4 h-4 text-brand-500" />
             Restart Full Quiz
@@ -164,35 +179,47 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
-      {/* Quiz Header & Progress */}
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {isReTestingWrong && (
-            <span className="text-xs uppercase font-bold px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 mr-1">
-              Re-Testing Missed
+      {/* Quiz Header & Live Score Card */}
+      <div className="p-4 sm:p-5 rounded-2xl glass-panel shadow-sm flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          {isReTestingWrong ? (
+            <span className="text-xs uppercase font-extrabold px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1.5">
+              <Flame className="w-3.5 h-3.5 text-amber-500" />
+              Wrong Answers Focused Drill
+            </span>
+          ) : (
+            <span className="text-xs uppercase font-extrabold px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20 flex items-center gap-1.5">
+              <Target className="w-3.5 h-3.5 text-brand-500" />
+              Active Recall Assessment
             </span>
           )}
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Question {currentIndex + 1} of {activeQuestions.length}
+
+          <span className="text-xs font-mono font-bold text-slate-400">
+            {currentIndex + 1} of {activeQuestions.length}
           </span>
         </div>
 
-        <div className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-          Current Score: {correctCount} / {Object.keys(selectedAnswers).length}
+        <div className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+          <span className="text-slate-400">Score:</span>
+          <span className="font-mono text-emerald-600 dark:text-emerald-400 text-sm">
+            {correctCount}
+          </span>
+          <span className="text-slate-400">/</span>
+          <span className="font-mono text-slate-500">{Object.keys(selectedAnswers).length}</span>
         </div>
       </div>
 
       {/* Progress Bar */}
       <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
         <div
-          className="bg-brand-600 dark:bg-brand-500 h-full transition-all duration-300"
+          className="bg-gradient-to-r from-brand-600 to-indigo-600 h-full transition-all duration-300"
           style={{ width: `${((currentIndex + 1) / activeQuestions.length) * 100}%` }}
         />
       </div>
 
       {/* Question Card */}
-      <div className="p-6 sm:p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl space-y-6">
-        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white leading-relaxed">
+      <div className="p-6 sm:p-8 rounded-3xl glass-panel shadow-xl space-y-6">
+        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white leading-relaxed">
           {currentQ.question}
         </h3>
 
@@ -202,15 +229,15 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
             const isSelected = selectedOptionId === opt.id;
             const isCorrect = opt.id === currentQ.correctOptionId;
 
-            let buttonStyle = 'border-slate-200 dark:border-slate-800 hover:border-brand-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-800 dark:text-slate-200';
+            let buttonStyle = 'border-slate-200/90 dark:border-slate-800 bg-white/70 dark:bg-slate-800/40 hover:border-brand-500/60 hover:bg-brand-50/20 text-slate-800 dark:text-slate-200';
 
             if (isAnswered) {
               if (isCorrect) {
-                buttonStyle = 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-100 font-medium';
+                buttonStyle = 'border-emerald-500 bg-emerald-500/10 text-emerald-900 dark:text-emerald-100 font-bold shadow-sm shadow-emerald-500/10';
               } else if (isSelected) {
-                buttonStyle = 'border-rose-500 bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-100';
+                buttonStyle = 'border-rose-500 bg-rose-500/10 text-rose-900 dark:text-rose-100 shadow-sm shadow-rose-500/10';
               } else {
-                buttonStyle = 'border-slate-200 dark:border-slate-800 opacity-50';
+                buttonStyle = 'border-slate-200/60 dark:border-slate-800/60 opacity-40';
               }
             }
 
@@ -219,9 +246,9 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
                 key={opt.id}
                 onClick={() => handleSelectOption(opt.id)}
                 disabled={isAnswered}
-                className={`w-full text-left p-4 rounded-2xl border-2 transition-all duration-200 flex items-start gap-3.5 relative ${buttonStyle}`}
+                className={`w-full text-left p-4 sm:p-5 rounded-2xl border-2 transition-all duration-200 flex items-start gap-4 relative card-hover-fx ${buttonStyle}`}
               >
-                <span className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs uppercase shrink-0 ${
+                <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-extrabold text-xs uppercase shrink-0 transition-colors ${
                   isAnswered && isCorrect
                     ? 'bg-emerald-500 text-white'
                     : isAnswered && isSelected
@@ -231,15 +258,15 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
                   {String.fromCharCode(65 + idx)}
                 </span>
 
-                <span className="text-sm sm:text-base leading-snug pt-0.5">
+                <span className="text-sm sm:text-base leading-snug pt-1 flex-1 font-medium">
                   {opt.text}
                 </span>
 
                 {isAnswered && isCorrect && (
-                  <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 ml-auto shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-emerald-500 ml-2 shrink-0 mt-1 animate-scale-in" />
                 )}
                 {isAnswered && isSelected && !isCorrect && (
-                  <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 ml-auto shrink-0 mt-0.5" />
+                  <XCircle className="w-5 h-5 text-rose-500 ml-2 shrink-0 mt-1 animate-scale-in" />
                 )}
               </button>
             );
@@ -248,16 +275,20 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
 
         {/* Immediate Feedback & Detailed Explanation */}
         {isAnswered && (
-          <div className={`p-4 rounded-2xl text-sm animate-slide-up border ${
+          <div className={`p-5 rounded-2xl text-sm animate-slide-up border ${
             isCurrentCorrect
-              ? 'bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900 text-emerald-900 dark:text-emerald-200'
-              : 'bg-rose-50/80 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900 text-rose-900 dark:text-rose-200'
+              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200'
+              : 'bg-rose-500/10 border-rose-500/30 text-rose-900 dark:text-rose-200'
           }`}>
-            <div className="flex items-center gap-2 font-bold mb-1">
-              <HelpCircle className="w-4 h-4" />
-              <span>{isCurrentCorrect ? 'Correct!' : 'Incorrect'}</span>
+            <div className="flex items-center gap-2 font-bold mb-1.5 text-base">
+              {isCurrentCorrect ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+              ) : (
+                <HelpCircle className="w-5 h-5 text-rose-500" />
+              )}
+              <span>{isCurrentCorrect ? 'Correct! High-Yield Insight:' : 'Incorrect. Key Clarification:'}</span>
             </div>
-            <p className="leading-relaxed opacity-95">
+            <p className="leading-relaxed opacity-95 text-sm sm:text-base">
               {currentQ.explanation}
             </p>
           </div>
@@ -268,7 +299,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ questions: initialQuestions 
           <div className="flex justify-end pt-2">
             <button
               onClick={handleNext}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-700 shadow-md transition-all active:scale-95"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 shadow-lg shadow-brand-500/25 transition-all active:scale-95"
             >
               <span>{currentIndex < activeQuestions.length - 1 ? 'Next Question' : 'View Results'}</span>
               <ArrowRight className="w-4 h-4" />
