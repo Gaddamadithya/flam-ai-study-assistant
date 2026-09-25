@@ -6,6 +6,8 @@ import { ResultView } from './components/ResultView';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 import { SavedSessionsModal } from './components/SavedSessionsModal';
+import { ChaosModal } from './components/ChaosModal';
+import { executeChaosScenario, ChaosScenario } from './lib/chaosSimulator';
 import {
   BrainCircuit,
   Moon,
@@ -14,7 +16,8 @@ import {
   Sparkles,
   ShieldCheck,
   Zap,
-  Code2
+  Code2,
+  ShieldAlert
 } from 'lucide-react';
 
 const STORAGE_KEY = 'omni_study_decks_v1';
@@ -42,6 +45,7 @@ export default function App() {
     }
   });
   const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
+  const [isChaosModalOpen, setIsChaosModalOpen] = useState(false);
 
   // Dark Mode
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -143,6 +147,28 @@ export default function App() {
     }
   };
 
+  const handleTriggerChaos = (scenario: ChaosScenario) => {
+    setIsLoading(true);
+    setErrorInfo(null);
+    setDeck(null);
+
+    // Simulate realistic asynchronous network delay (600ms) before failure
+    setTimeout(() => {
+      try {
+        executeChaosScenario(scenario);
+      } catch (err: any) {
+        setIsLoading(false);
+        if (err instanceof AppError) {
+          setErrorInfo({
+            message: err.message,
+            details: err.details,
+            raw: err.raw
+          });
+        }
+      }
+    }, 600);
+  };
+
   const handleSaveDeck = (deckToSave: StudyDeck) => {
     setSavedDecks((prev) => {
       const exists = prev.some((d) => d.id === deckToSave.id);
@@ -203,6 +229,16 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => setIsChaosModalOpen(true)}
+              title="Reviewer AI Chaos & Failure Testing Sandbox"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50/80 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/80 text-xs font-bold text-rose-700 dark:text-rose-300 shadow-xs transition-all active:scale-95"
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-500" />
+              <span className="hidden sm:inline">Chaos Sandbox</span>
+              <span className="sm:hidden">Chaos</span>
+            </button>
+
             <button
               onClick={() => setIsSessionsModalOpen(true)}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 shadow-xs transition-all active:scale-95"
@@ -355,6 +391,13 @@ export default function App() {
           setErrorInfo(null);
         }}
         onDeleteDeck={handleDeleteDeck}
+      />
+
+      {/* Reviewer AI Chaos & Failure Testing Sandbox */}
+      <ChaosModal
+        isOpen={isChaosModalOpen}
+        onClose={() => setIsChaosModalOpen(false)}
+        onTriggerChaos={handleTriggerChaos}
       />
     </div>
   );
