@@ -11,8 +11,11 @@ import {
   Sparkles,
   RotateCcw,
   Zap,
-  Lightbulb
+  Lightbulb,
+  Volume2,
+  Clock
 } from 'lucide-react';
+import { speechService } from '../lib/speech';
 
 interface FlashcardDeckProps {
   cards: Flashcard[];
@@ -47,19 +50,38 @@ export const FlashcardDeck: React.FC<FlashcardDeckProps> = ({ cards: initialCard
 
   const currentCard = activeDeck[currentIndex] || activeDeck[0];
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  const handleSpeak = (text: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isSpeaking) {
+      speechService.stop();
+      setIsSpeaking(false);
+    } else {
+      setIsSpeaking(true);
+      speechService.speak(text, () => setIsSpeaking(false));
+    }
+  };
+
   const handleNext = useCallback(() => {
+    speechService.stop();
+    setIsSpeaking(false);
     setIsFlipped(false);
     setShowHint(false);
     setCurrentIndex((prev) => (prev < activeDeck.length - 1 ? prev + 1 : 0));
   }, [activeDeck.length]);
 
   const handlePrev = useCallback(() => {
+    speechService.stop();
+    setIsSpeaking(false);
     setIsFlipped(false);
     setShowHint(false);
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : activeDeck.length - 1));
   }, [activeDeck.length]);
 
   const handleFlip = useCallback(() => {
+    speechService.stop();
+    setIsSpeaking(false);
     setIsFlipped((prev) => !prev);
   }, []);
 
@@ -252,10 +274,21 @@ export const FlashcardDeck: React.FC<FlashcardDeckProps> = ({ cards: initialCard
           {/* Card Front */}
           <div className="absolute inset-0 p-8 flex flex-col justify-between backface-hidden rounded-3xl bg-gradient-to-b from-white via-slate-50/50 to-indigo-50/20 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-950/80">
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
-                <Zap className="w-3.5 h-3.5 text-brand-500" />
-                Prompt • Question
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/20">
+                  <Zap className="w-3.5 h-3.5 text-brand-500" />
+                  Prompt • Question
+                </span>
+
+                <button
+                  type="button"
+                  onClick={(e) => handleSpeak(currentCard.question, e)}
+                  title={isSpeaking ? "Stop audio" : "Listen to question"}
+                  className="p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-800/80 hover:text-brand-600 dark:hover:text-brand-400 text-slate-500 transition-colors shadow-xs"
+                >
+                  <Volume2 className={`w-3.5 h-3.5 ${isSpeaking ? 'text-brand-600 animate-pulse' : ''}`} />
+                </button>
+              </div>
 
               <div className="flex items-center gap-2">
                 {currentCard.difficulty && (
@@ -331,10 +364,22 @@ export const FlashcardDeck: React.FC<FlashcardDeckProps> = ({ cards: initialCard
           {/* Card Back */}
           <div className="absolute inset-0 p-8 flex flex-col justify-between backface-hidden rotate-y-180 rounded-3xl bg-gradient-to-b from-emerald-50/30 via-white to-slate-50/50 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-950/90 border-2 border-emerald-500/25">
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                Verified Answer
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  Verified Answer
+                </span>
+
+                <button
+                  type="button"
+                  onClick={(e) => handleSpeak(currentCard.answer, e)}
+                  title={isSpeaking ? "Stop audio" : "Listen to answer"}
+                  className="p-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-white/80 dark:bg-slate-800/80 hover:text-emerald-600 text-emerald-600 transition-colors shadow-xs"
+                >
+                  <Volume2 className={`w-3.5 h-3.5 ${isSpeaking ? 'animate-pulse' : ''}`} />
+                </button>
+              </div>
+
               <span className="text-xs text-slate-400 font-mono font-bold">#{currentIndex + 1}</span>
             </div>
 
@@ -348,7 +393,16 @@ export const FlashcardDeck: React.FC<FlashcardDeckProps> = ({ cards: initialCard
 
             <div className="flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 pt-4 border-t border-slate-100 dark:border-slate-800/80">
               <span className="font-medium">Press Space to flip back</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Active Retrieval Encoded</span>
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                <Clock className="w-3.5 h-3.5" />
+                <span>
+                  {currentStatus === 'mastered'
+                    ? 'SRS: Next Review in 3 Days'
+                    : currentStatus === 'review'
+                    ? 'SRS: Review in 10 Minutes'
+                    : 'SRS: Initial Recall'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
