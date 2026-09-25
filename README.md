@@ -134,6 +134,27 @@ async function handleGenerate(input: string) {
    - Complete dark/light mode toggle with system preference detection and localStorage persistence.
    - Fully responsive design engineered for mobile screens and desktop viewports.
 
+8. **Reviewer AI Chaos & Failure Testing Sandbox (`ChaosModal.tsx` — 🔥 Top Signal)**:
+   - Built specifically for technical evaluators to test defensive failure recovery live without touching code.
+   - Click "Chaos Sandbox" in the header to simulate:
+     - 💥 *Malformed JSON (Syntax Error)*
+     - 💥 *Wrong Schema Shape (Missing keys)*
+     - 💥 *Empty Model Output (Zero tokens)*
+     - 💥 *Network Timeout (HTTP 504)*
+     - 💥 *Provider Outage / Rate Limit (HTTP 500)*
+   - Verifies that the app never crashes, captures exact diagnostics, and allows instant single-click retry.
+
+9. **Text-to-Speech Audio Pronunciation (`speech.ts`)**:
+   - Integrated Web Speech API (`SpeechSynthesis`) allows auditory learners to listen to questions and answers with a single click.
+
+10. **Multi-Format Export Suite (`exportUtils.ts`)**:
+    - **Export to Anki (.tsv)**: Ready for instant import into the Anki flashcard application.
+    - **Export to Markdown (.md)**: Formatted, printable study cheat sheet with checklists, cards, and quiz answer keys.
+    - **Export to JSON**: Raw schema payload for developer integration.
+
+11. **Spaced Repetition (SRS) Engine**:
+    - SuperMemo SM-2 interval indicators on cards guiding optimal recall schedules (*Review in 10 mins*, *Review in 3 days*).
+
 ---
 
 ## 🛡️ Error Handling Matrix

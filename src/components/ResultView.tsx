@@ -13,8 +13,10 @@ import {
   Bookmark,
   Check,
   Cpu,
-  Sparkles
+  Sparkles,
+  FileText
 } from 'lucide-react';
+import { exportToAnkiTSV, exportToMarkdown, exportToJSON } from '../lib/exportUtils';
 
 interface ResultViewProps {
   deck: StudyDeck;
@@ -37,16 +39,6 @@ export const ResultView: React.FC<ResultViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<ViewMode>('cards');
   const [copied, setCopied] = useState(false);
-
-  const handleExportJSON = () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(deck, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `${deck.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(JSON.stringify(deck, null, 2));
@@ -81,7 +73,7 @@ export const ResultView: React.FC<ResultViewProps> = ({
               )}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => onSaveDeck(deck)}
                 className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-2xl border transition-all shadow-xs active:scale-95 ${
@@ -95,8 +87,26 @@ export const ResultView: React.FC<ResultViewProps> = ({
               </button>
 
               <button
-                onClick={handleExportJSON}
-                title="Download JSON deck"
+                onClick={() => exportToAnkiTSV(deck)}
+                title="Export cards for Anki (.tsv)"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all shadow-xs active:scale-95"
+              >
+                <Download className="w-3.5 h-3.5 text-brand-500" />
+                <span>Anki</span>
+              </button>
+
+              <button
+                onClick={() => exportToMarkdown(deck)}
+                title="Download formatted Markdown study cheat sheet"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all shadow-xs active:scale-95"
+              >
+                <FileText className="w-3.5 h-3.5 text-purple-500" />
+                <span>Notes (.md)</span>
+              </button>
+
+              <button
+                onClick={() => exportToJSON(deck)}
+                title="Download raw JSON"
                 className="p-2 rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all shadow-xs active:scale-95"
               >
                 <Download className="w-4 h-4" />
