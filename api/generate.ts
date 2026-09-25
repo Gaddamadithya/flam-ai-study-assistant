@@ -1,4 +1,17 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+// Self-contained Vercel serverless request/response definitions to eliminate TS2307 compilation errors
+export interface VercelRequest {
+  method?: string;
+  body?: any;
+  headers?: Record<string, any>;
+  query?: Record<string, any>;
+}
+
+export interface VercelResponse {
+  setHeader(name: string, value: string): any;
+  status(statusCode: number): any;
+  json(body: any): any;
+  end(): any;
+}
 
 const JSON_SCHEMA_INSTRUCTION = `
 You are an expert educational AI. Given the user's study topic or raw notes, generate a structured, high-yield study deck.
