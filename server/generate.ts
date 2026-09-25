@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -327,6 +329,16 @@ app.get('/api/health', (_req, res) => {
     hasOpenAiKey: Boolean(process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here')
   });
 });
+
+// Serve static client assets in production if dist exists
+const distPath = path.join(process.cwd(), 'dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req: Request, res: Response, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`[API Server] Running securely on http://localhost:${PORT}`);
